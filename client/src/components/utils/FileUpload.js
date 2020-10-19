@@ -9,12 +9,12 @@ function FileUpload(){
            <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
   {({getRootProps, getInputProps}) => (
     <section>
-      <div
-      style={{width: 300, height: 240, border: '1px solid lightgray',
-      display: 'flex', alignSelf: 'center', justifyContent: 'center'}}
+      <div 
+      style={{width: 300, height:240, border: '1px solid lightgray',
+    display: 'flex', alignItems: 'center', justifyContent: 'center'}}
       {...getRootProps()}>
         <input {...getInputProps()} />
-        <Icon type="plus" style={{ fontSize:'3rem'}}></Icon>
+        <Icon type="plus" style={{ fontSize:'3rem'}}/>
       </div>
     </section>
   )}
