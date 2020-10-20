@@ -4,11 +4,12 @@ import { Icon } from 'antd'
 import axios from 'axios'
 
 
-function FileUpload(){
+function FileUpload(props){
 
     const [Images, setImages] = useState([])
 
 
+    // 이미지 올리기
     const dropHandler = (files)=>{
 
           //file을 백엔드에 전해줌(1)
@@ -25,12 +26,35 @@ function FileUpload(){
             // 백엔드는 그 결과를 프론트로 보내줌(3)
             .then(response =>{
                 if(response.data.success){
-                  console.log(response.data)
-                  setImages([...Images, response.data.filePath])
+                    setImages([...Images, response.data.filePath])
+                    props.refreshFunction([...Images, response.data.filePath])
+
+
                 }else{
                     alert('파일 저장 실패')
                 }
             })
+
+    }
+
+    //이미지 지우기
+    const deleteHandler = (image) => {
+
+        const currentIndex = Images.indexOf(image)
+
+        //이미지 스테이트에 들어있는 모든 이미지를 복사해서
+        // newImages라는 배열에 넣는다.
+        let newImages = [...Images]
+
+        //newImages배열안에 있는 사진 중 
+        //클릭한 사진의 인덱스를 지워줌
+        newImages.splice(currentIndex, 1)
+
+        //새로운 이미지 배열인 newImages를
+        //다시 setImages 해준다.
+        setImages(newImages)
+
+        props.refreshFunction(newImages)
 
     }
 
@@ -54,7 +78,7 @@ function FileUpload(){
        <div style={{ display: 'flex', width: '350px', height: '240px', overflowX:'scroll'}}>
 
           {Images.map((image, index) => (
-              <div>
+              <div onClick={()=> deleteHandler(image)} key={index}>
                   <img style={{ minWidth: '300px', width:'300px', height: ' 240px'}}
                   src={`http://localhost:5000/${image}`}
                   />

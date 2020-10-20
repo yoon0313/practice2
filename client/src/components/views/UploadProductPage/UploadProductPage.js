@@ -2,6 +2,7 @@ import React from 'react'
 import {Typography, Button, Form, Input} from 'antd';
 import { useState } from 'react';
 import FileUpload from '../../utils/FileUpload';
+import Axios from 'axios';
 
 
 const { TextArea } = Input;
@@ -19,7 +20,7 @@ const Continents= [
 
 
 
-function UploadProductPage(){
+function UploadProductPage(props){
 
     const [Title, setTitle] = useState("")
     const [Description, setDescription] = useState("")
@@ -54,6 +55,50 @@ function UploadProductPage(){
 
     }
 
+    const updateImages = (newImages) => {
+         
+        setImages(newImages)
+
+    
+    }
+
+    const submitHandler = (event) =>{
+        // preventDefault를 해줘야 확인 버튼을 눌렀을때
+        // 화면이 새로고침되지 않는다.
+        event.preventDefault();
+
+
+        //모든 입력칸이 채워지지않으면 submit할 수없게 조건문
+        if(!Title || !Description || !Price || !Continent || !Images){
+            return alert("모든 값을 넣어주세요")
+        }
+
+
+        //서버에 채운 값을 request로 보낸다.
+        //axious post를 하면 body를 적어줘야함
+        const body = {
+            //로그인된 사람의 ID를 가져오기위해 
+            writer: props.user.userData._id,
+            title:Title,
+            description:Description,
+            price:Price,
+            images:Images,
+            continents: Continent
+        }
+
+         //서버로 보내기
+        Axios.post("/api/product", body)
+            .then(response => {
+                if(response.data.success){
+                    alert('상품 업로드에 성공 했습니다.')
+                    //상품업로드 후 랜딩페이지로 돌아감
+                    props.history.push('/')
+                }else{
+                    alert('상품 업로드에 실패 했습니다.')
+                }
+            })
+
+    }
 
 
 
@@ -63,9 +108,12 @@ function UploadProductPage(){
             <div style={{ textAlign:'center', marginBottom:'2rem'}}>
                 <h2>여행 상품 업로드</h2>
             </div>
-           <Form>
+
+
+           <Form onSubmit={submitHandler}>
                {/* DropZone */}
-               <FileUpload/>
+                <FileUpload refreshFunction={updateImages}/>
+
                <br/>
                <br/>
                <label>이름</label>
@@ -87,7 +135,8 @@ function UploadProductPage(){
                </select>
                <br/>
                <br/>
-               <Button>
+               
+               <Button type="submit"onClick={submitHandler}>
                    확인
                </Button>
            </Form>
